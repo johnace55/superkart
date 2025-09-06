@@ -1,0 +1,91 @@
+{% extends "tut/base.html" %}
+{% load static %}
+
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+
+<!-- ============================ COMPONENT REGISTER   ================================= -->
+	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+      <article class="card-body">
+		<header class="mb-4"><h4 class="card-title">Sign up</h4></header>
+		<form action='{% url "registercustomer" %}' method='post'>
+
+				{% csrf_token %}
+
+				<div class="form-group">
+					<label>Fist Name</label>
+					{{form.first_name}}
+				</div> <!-- form-group end.// -->
+
+				<div class="form-group">
+					<label>Last Name</label>
+					{{form.last_name}}
+				</div> <!-- form-group end.// -->
+
+				<div class="form-group">
+					<label>User Name</label>
+					{{form.username}}
+				</div> <!-- form-group end.// -->
+
+				<div class="form-group">
+					<label>Email</label>
+					{{form.email}}
+					<small class="form-text text-muted">We'll never share your email with anyone else.</small>
+				</div> <!-- form-group end.// -->
+				
+				<div class="form-row">
+					<div class="form-group col-md-6">
+						<label>Create password</label>
+					    {{form.password}}
+					</div> <!-- form-group end.// --> 
+
+					<div class="form-group col-md-6">
+						<label>Confirm password</label>
+					    {{form.confirm_password}}
+					</div> <!-- form-group end.// -->  
+				</div>
+
+				<ul class="errorlist">
+					{% for field in form %}
+						{% if field.errors %}
+							{% for error in field.errors %}
+								<li style='color:red;'>{{error}}</li>
+							{% endfor %}
+						{% endif %}
+					{% endfor %}
+
+					{% if form.non_field_errors %}
+						<li style='color:red;'>{{form.non_field_errors}}</li>
+					{% endif %}
+					
+				</ul>
+				
+			    <div class="form-group">
+			        <button type="submit" class="btn btn-primary btn-block"> Register  </button>
+			    </div> <!-- form-group// -->   
+				
+				<div class="form-group">
+					{% include "accounts/alerts.html" %}
+			    </div> <!-- form-group// --> 
+
+			        
+			</form>
+		</article><!-- card-body.// -->
+    </div> <!-- card .// -->
+    <p class="text-center mt-4">Have an account? <a href="">Log In</a></p>
+    <br><br>
+<!-- ============================ COMPONENT REGISTER  END.// ================================= -->
+
+
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+
+{% endblock content %}
+
+
+
+
