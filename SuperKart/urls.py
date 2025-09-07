@@ -27,4 +27,13 @@ urlpatterns = [
 
  
 
+from django.conf.urls import handler403
+from django.shortcuts import render
+
+def custom_permission_denied_view(request, exception=None):
+    return render(request, "accounts/403.html", status=403)
+
+handler403 = custom_permission_denied_view
+
+
 
