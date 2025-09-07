@@ -4,14 +4,47 @@ from accounts.models import CustomUser , CustomUserProfile
 from django.contrib import messages
 from seller.models import Seller
 from seller.forms import SellerForm
+from django.contrib import auth
+from accounts.utils import detectuser
+from django.contrib.auth.decorators import login_required , user_passes_test
+from django.core.exceptions import PermissionDenied
 
 
 
 # Create your views here.
 
+
+
+# restrict the seller from accessing the customer page
+
+def check_role_seller(user):
+    
+    if user.role == 1:
+        return True
+    else:
+        raise PermissionDenied
+
+
+
+# restrict the customer from accessing the seller page
+
+
+def check_role_customer(user):
+    
+    if user.role == 2:
+        return True
+    else:
+        raise PermissionDenied
+    
+
+
 def registercustomer(request):
 
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        messages.warning(request , 'you are already logged in!')
+        return redirect('myAccount')
+
+    elif request.method == 'POST':
         form = CustomerForm(request.POST)
         if form.is_valid():
 
@@ -55,7 +88,12 @@ def registercustomer(request):
 
 def registerseller(request):
 
-    if request.method == 'POST':
+
+    if request.user.is_authenticated:
+        messages.warning(request , 'you are already logged in!')
+        return redirect('myAccount')
+
+    elif request.method == 'POST':
 
         form = CustomerForm(request.POST)
         s_form = SellerForm(request.POST , request.FILES)
@@ -99,5 +137,75 @@ def registerseller(request):
     }
 
     return render(request , 'accounts/registerseller.html' , context)
+
+
+def login(request):
+
+    if request.user.is_authenticated:
+        messages.warning(request , 'you are already logged in!')
+        return redirect('myAccount')
+
+    elif request.method == 'POST':
+
+        email = request.POST['email']
+        password = request.POST['password']
+
+        user = auth.authenticate(email=email , password=password)
+        if user is not None:
+
+            auth.login(request , user)
+
+            messages.success(request , 'your are now logged in')
+            return redirect('myAccount')
+        else:
+            messages.success(request , 'invalid credentials')
+            return redirect('login')
+        
+
+    return render(request , 'accounts/login.html')
+
+
+
+def logout(request):
+
+
+
+    if request.method == 'POST':
+
+        auth.logout(request)
+
+        messages.info(request , 'You are now logged out!')
+
+        return redirect('login')
+    
+
+
+
+
+
+
+@login_required
+def myAccount(request):
+
+    user = request.user
+    redirecturl = detectuser(user=user)
+
+    return redirect(redirecturl)
+
+
+
+@login_required
+@user_passes_test(check_role_customer)
+def customerdashboard(request):
+    return render(request , 'accounts/customerdashboard.html')
+
+
+@login_required
+@user_passes_test(check_role_seller)
+def sellerdashboard(request):
+    return render(request , 'accounts/sellerdashboard.html')
+
+
+
 
 

@@ -84,6 +84,16 @@ class CustomUser(AbstractBaseUser):
 
     def has_module_perms(self , app_label):
         return True
+    
+
+    def get_role(self):
+        if self.role == 1:
+            user_role = 'Seller'
+            return user_role
+        elif self.role == 2:
+            user_role = 'Customer'
+            return user_role
+        return 'admin'
 
 
 class CustomUserProfile(models.Model):
