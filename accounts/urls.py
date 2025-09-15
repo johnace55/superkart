@@ -1,8 +1,11 @@
-from django.urls import path
+from django.urls import path , include
 from accounts import views
 
 
 urlpatterns = [
+
+    path('' , views.myAccount),
+
     path('registercustomer/' , views.registercustomer , name='registercustomer'),
     path('registerseller/' , views.registerseller , name='registerseller'),
     path('login/' , views.login , name='login'),
@@ -19,6 +22,11 @@ urlpatterns = [
     path('forgot_password/' , views.forgot_password , name='forgot_password'),
     path('reset_password_validate/<uidb64>/<token>/' , views.reset_password_validate , name='reset_password_validate'),
     path('reset_password/' , views.reset_password , name='reset_password'),
+
+
+    path('seller/' , include('seller.urls')),
+
+
 ]
 
 

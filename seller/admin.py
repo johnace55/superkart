@@ -6,6 +6,7 @@ from seller.models import Seller
 class SellerAdmin(admin.ModelAdmin):
     list_display = ['custom_user' , 'seller_name' , 'is_approved' , 'created_at']
     list_display_links = ['custom_user' , 'seller_name']
+    list_editable = ['is_approved']
 
 admin.site.register(Seller , SellerAdmin)
 

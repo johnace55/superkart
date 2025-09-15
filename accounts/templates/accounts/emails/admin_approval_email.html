@@ -1,0 +1,18 @@
+{% autoescape off %}
+
+hi {{user.username}},
+
+
+{% if is_approved %}
+your restaurant has been approved!
+{% else %}
+we are sorry your shop is not approved to sell on this website!
+{% endif %}
+
+please click on below link to confirm your registration.
+
+
+
+
+{% endautoescape %}
+

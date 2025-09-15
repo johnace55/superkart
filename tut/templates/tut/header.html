@@ -17,8 +17,12 @@
 		</li>
     </ul>
     <ul class="navbar-nav">
+		{% if request.user.is_authenticated %}
+		<p>Welcome back, {{ request.user.username }}!</p>
+		{% else %}		
 		<li><a href="#" class="nav-link"> <i class="fa fa-envelope"></i> Email </a></li>
 		<li><a href="{% url 'registerseller' %}" class="nav-link"> <i class="fa fa-store"></i> Become a Seller </a></li>
+		{% endif %}
 	</ul> <!-- list-inline //  -->
   </div> <!-- navbar-collapse .// -->
 </div> <!-- container //  -->

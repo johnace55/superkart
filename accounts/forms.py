@@ -8,7 +8,7 @@ class CustomerForm(forms.ModelForm):
 
     class Meta:
         model = CustomUser
-        fields = ['first_name' , 'last_name' , 'username' , 'email' , 'password' , 'confirm_password']
+        fields = ['first_name' , 'last_name' , 'username' , 'email' , 'password']
 
 
     def __init__(self, *args, **kwargs):
