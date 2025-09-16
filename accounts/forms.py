@@ -1,5 +1,5 @@
 from django import forms
-from accounts.models import CustomUser
+from accounts.models import CustomUser , CustomUserProfile
 
 class CustomerForm(forms.ModelForm):
 
@@ -28,6 +28,17 @@ class CustomerForm(forms.ModelForm):
             raise forms.ValidationError('Password does not match')
         
         
+class CustomUserProfileForm(forms.ModelForm):
+    
+    class Meta:
+        model = CustomUserProfile
+        fields = ['address_line_1' , 'address_line_2' , 'country' , 'state' , 'city' , 'pin_code']
+
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserProfileForm , self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control no-border'
 
 
 

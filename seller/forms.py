@@ -1,9 +1,14 @@
 from django import forms
 from accounts.models import CustomUser
 from seller.models import Seller
+from django.core import validators
+from seller.validators import allow_only_images_validators
+
 
 
 class SellerForm(forms.ModelForm):
+
+    seller_license = forms.FileField(widget=forms.FileInput(attrs={"class":"form-control no-border"}) , validators=[allow_only_images_validators])
 
     class Meta:
         model = Seller
