@@ -1,0 +1,69 @@
+{% extends "tut/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-conten padding-y bg">
+<div class="container">
+	<div class="row">
+		{% include "accounts/s_sidebar.html" %}
+
+		<main class="col-md-9">
+			<article class="card">
+				<header class="card-header d-flex justify-content-between align-items-center">
+					<strong>Add Product</strong>
+					<button onclick="history.back()" class="btn btn-secondary btn-sm">Back to Products</button>
+				</header>
+
+				<div class="card-body">
+					<form action='{% url "add_product" %}' method="post" enctype="multipart/form-data" class="p-3">
+						{% csrf_token %}
+
+						<div class="form-group mb-4">
+							<label for="id_product_title">Product Title</label>
+							{{ form.product_title }}
+						</div>
+
+						<div class="form-group mb-4">
+							<label for="id_category">Category</label>
+							{{ form.category }}
+						</div>
+
+						<div class="form-group mb-4">
+							<label for="id_description">Description</label>
+							{{ form.description }}
+						</div>
+
+						<div class="form-group mb-4">
+							<label for="id_price">Price</label>
+							{{ form.price }}
+						</div>
+
+						<div class="form-group mb-4">
+							<label for="id_product_image">Product Image</label>
+							{{ form.image }}
+						</div>
+
+						<div class="form-group mb-4">
+							<div class="form-check form-switch">
+								{{ form.is_available }}
+								<label class="form-check-label ms-2" for="id_is_available">
+									Available for Sale
+								</label>
+							</div>
+						</div>
+
+						<button type="submit" class="btn btn-primary">Create</button>
+					</form>
+				</div>
+			</article>
+		</main>
+
+		<div class="form-group">
+			{% include "accounts/alerts.html" %}
+		</div>
+	</div>
+</div>
+</section>
+
+{% endblock content %}

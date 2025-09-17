@@ -1,0 +1,79 @@
+{% extends "tut/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-conten padding-y bg">
+<div class="container">
+	<div class="row">
+		{% include "accounts/s_sidebar.html" %}
+
+		<main class="col-md-9">
+			<article class="card">
+				<header class="card-header d-flex justify-content-between align-items-center">
+					<strong>Products</strong>
+					<a href="{% url 'add_product' %}" class="btn btn-primary btn-sm">Add Product</a>
+				</header>
+
+				<div class="card-body">
+					<h5 class="mb-3">Your Uploaded Products</h5>
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th>#</th>
+									<th>Image</th>
+									<th>Name</th>
+									<th>Price</th>
+									<th>Status</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for product in products %}
+								<tr>
+									<td>{{ forloop.counter }}</td>
+									<td width="65">
+										<img src="{{ product.image.url }}" class="img-xs border" alt="{{ product.product_name }}">
+									</td>
+									<td>{{ product.product_title }}</td>
+									<td>${{ product.price }}</td>
+									<td>
+										{% if product.is_available %}
+											<span class="badge badge-success">Available</span>
+										{% else %}
+											<span class="badge badge-secondary">Unavailable</span>
+										{% endif %}
+									</td>
+									<td>
+										<a href="{% url 'edit_product' product.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+										<a href="{% url 'delete_product' product.pk %}" class="btn btn-sm btn-light">Delete</a>
+									</td>
+								</tr>
+								{% empty %}
+								<tr>
+									<td colspan="6" class="text-center text-muted">No products uploaded yet.</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</article>
+		</main>
+
+		<div class="form-group">
+			{% include "accounts/alerts.html" %}
+		</div>
+	</div>
+</div>
+</section>
+
+{% endblock content %}
+
+
+
+
+
+
+

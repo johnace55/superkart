@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'tut',
     'accounts',
     'seller',
+    'product',
 ]
 
 MIDDLEWARE = [
