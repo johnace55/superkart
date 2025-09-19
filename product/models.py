@@ -1,5 +1,6 @@
 from django.db import models
 from seller.models import Seller
+from accounts.models import CustomUser
 
 # Create your models here.
 
@@ -31,6 +32,21 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_title 
+
+
+class Cart(models.Model):
+    custom_user = models.ForeignKey(CustomUser , on_delete=models.CASCADE)
+    product = models.ForeignKey(Product , on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def sub_total(self):
+        return self.product.price * self.quantity
+
+    def __str__(self):
+        return self.custom_user.username
+
 
 
 
