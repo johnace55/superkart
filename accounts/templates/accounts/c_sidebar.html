@@ -1,9 +1,9 @@
 <aside class="col-md-3">
 		<!--   SIDEBAR   -->
 		<ul class="list-group">
-			<a class="list-group-item active" href="#"> Dashboard </a>
+			<a class="list-group-item {% if '/accounts/customerdashboard/' == request.path or '/accounts/customer/' == request.path %}active{% endif %}" href="{% url 'customerdashboard' %}"> Dashboard </a>
 			<a class="list-group-item" href="#"> My orders </a>
-			<a class="list-group-item" href="#"> Profile Settings </a>
+			<a class="list-group-item {% if 'customerprofile' in request.path %}active{% endif %}" href="{% url 'customerprofile' %}"> Profile Settings </a>
 			<a class="list-group-item" href="#">change password </a>
 		</ul>
 		<br>

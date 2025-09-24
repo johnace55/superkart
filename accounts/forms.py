@@ -41,6 +41,16 @@ class CustomUserProfileForm(forms.ModelForm):
             field.widget.attrs['class'] = 'form-control no-border'
 
 
+class CustomUserInfoForm(forms.ModelForm):
+
+    class Meta:
+        model = CustomUser
+        fields = ['first_name' , 'last_name' , 'phone_number']
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserInfoForm , self).__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs['class'] = 'form-control no-border'
 
 
 
