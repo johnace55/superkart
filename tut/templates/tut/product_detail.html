@@ -42,12 +42,24 @@
 
 
 				<!-- Add to cart -->
+
+				{% if in_cart %}
+		
+				<div class="mb-3">
+					<a href="{% url 'cart'  %}" class="btn btn-success"> 
+						<span class="text">Go to Cart</span> 
+						<i class="fas fa-shopping-cart"></i>  
+					</a>
+				</div>
+				{% else %}
+
 				<div class="mb-3">
 					<a href="{% url 'add_to_cart' product.pk %}" class="btn btn-primary"> 
 						<span class="text">Add to cart</span> 
 						<i class="fas fa-shopping-cart"></i>  
 					</a>
 				</div>
+				{% endif %}
 
 			</article> <!-- content-body .// -->
 		</main> <!-- col.// -->

@@ -10,6 +10,10 @@ urlpatterns = [
     path('all_products/' , views.all_products , name='all_products'),
     path('category/<str:category>/' , views.all_products , name='products_by_category'),
 
+
+    #search
+    path('search/' , views.search , name='search'),
+
     
 ]
 

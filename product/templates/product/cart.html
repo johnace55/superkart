@@ -75,10 +75,16 @@
                             <dt>Subtotal:</dt>
                             <dd class="text-right">${{subtotal}}</dd>
                         </dl>
-                        <dl class="dlist-align">
-                            <dt>Tax:</dt>
-                            <dd class="text-right">${{tax}}</dd>
-                        </dl>
+
+                        {% for key , value in tax_dict.items %}
+                            {% for k , v in value.items %}
+                                <dl class="dlist-align">
+                                    <dt>{{key}} <small>({{k}}%)</small>:</dt>
+                                    <dd class="text-right">${{v}}</dd>
+                                </dl>
+                            {% endfor %}
+                        {% endfor %}
+
                         <dl class="dlist-align">
                             <dt>Total:</dt>
                             <dd class="text-right text-dark b"><strong>${{grand_total}}</strong></dd>
