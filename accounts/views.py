@@ -11,6 +11,7 @@ from django.core.exceptions import PermissionDenied
 from django.utils.http import urlsafe_base64_encode , urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
+from orders.models import Order
 
 
 
@@ -326,7 +327,14 @@ def myAccount(request):
 @login_required
 @user_passes_test(check_role_customer)
 def customerdashboard(request):
-    return render(request , 'accounts/customerdashboard.html')
+    orders = Order.objects.filter(custom_user=request.user , is_ordered=True)
+    recent_orders = orders[:5]
+    context = {
+        'orders':orders,
+        'orders_count':orders.count(),
+        'recent_orders':recent_orders,
+    }
+    return render(request , 'accounts/customerdashboard.html' , context)
 
 
 @login_required

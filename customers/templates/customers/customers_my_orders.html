@@ -11,36 +11,10 @@
 		
 		<main class="col-md-9">
 			<article class="card">
-				<header class="card-header">
-					<strong class="d-inline-block mr-3">Customer Dashboard</strong>
-				</header>
-
-				<!-- Overview Cards -->
-				<div class="card-body">
-					<div class="row text-center align-items-stretch">
-						<!-- Total Orders (smaller width) -->
-						<div class="col-md-4">
-							<div class="card shadow-sm p-3 mb-3 bg-white rounded h-100 d-flex flex-column justify-content-center" style="min-height:120px;">
-								<h6 class="text-muted">Total Orders</h6>
-									<h3 class="mb-0">{{orders_count}}</h3>
-							</div>
-						</div>
-						<!-- Edit Profile (larger width) -->
-						<div class="col-md-8">
-							<div class="card shadow-sm p-3 mb-3 bg-white rounded h-100 d-flex flex-column justify-content-center" style="min-height:120px;">
-								<h6 class="text-muted">Edit Profile</h6>
-								<a href="{% url 'customerprofile' %}" style="text-decoration: none; color: inherit;">
-									<i class="fas fa-user-edit fa-lg text-success"></i>
-									<p class="mb-0 mt-1">Update</p>
-								</a>
-							</div>
-						</div>
-					</div> <!-- row.// -->
-				</div> <!-- card-body .// -->
 
 				<!-- Recent Orders -->
 				<div class="card-body border-top">
-					<h5 class="mb-3">Recent Orders</h5>
+					<h5 class="mb-3">All Orders</h5>
 					<div class="table-responsive">
 						<table class="table table-hover">
 							<thead>
@@ -55,7 +29,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{% for order in recent_orders %}
+								{% for order in orders %}
 								<tr>
 									<td>{{forloop.counter}}</td>
 									<td>{{order.order_number}}</td>

@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from accounts.forms import CustomUserProfileForm , CustomUserInfoForm
 from accounts.models import CustomUserProfile , CustomUser
 from django.contrib import messages
+from orders.models import Order , OrderedProduct
+import simplejson as json
 
 # Create your views here.
 
@@ -27,6 +29,37 @@ def customer_profile(request):
         'user_form':user_form,
     }
     return render(request , 'customers/customer_profile.html' , context)
+
+
+@login_required
+def customers_my_orders(request):
+    orders = Order.objects.filter(custom_user=request.user , is_ordered=True).order_by('-created_at')
+    context = {
+        'orders':orders,
+    }
+    return render(request , 'customers/customers_my_orders.html' , context)
+
+
+@login_required
+def order_details(request , order_number):
+    try:
+        order = Order.objects.get(order_number=order_number , is_ordered=True)
+        ordered_product = OrderedProduct.objects.filter(order=order)
+
+        subtotal = 0
+        for item in ordered_product:
+            subtotal += (item.price * item.quantity)
+        tax_data = json.loads(order.tax_data)
+        context = {
+            'order':order,
+            'ordered_product':ordered_product,
+            'subtotal':subtotal,
+            'tax_data':tax_data,
+        }
+        return render(request , 'customers/order_details.html' , context)
+    except:
+        return redirect('home')
+
 
 
 

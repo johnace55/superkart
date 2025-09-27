@@ -1,0 +1,115 @@
+{% extends "tut/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-conten padding-y bg">
+  <div class="container">
+    <div class="row">
+      {% include "accounts/c_sidebar.html" %}
+      
+      <main class="col-md-9">
+        <article class="card shadow-sm">
+          <div class="card-body">
+
+            <!-- Thank You Header -->
+            <h3 class="mb-3">Thank You For Your Order.</h3>
+
+            <!-- Order Greeting + Customer Info -->
+            <div class="row mb-4">
+              <div class="col-md-8">
+                <h5>Hello {{ order.name }},</h5>
+                <p class="mb-0">Review your order details below.</p>
+              </div>
+              <div class="col-md-4 text-right">
+                <p class="mb-1">{{ order.name }}</p>
+                <p class="mb-1">{{ order.address }}</p>
+                <p class="mb-1">{{ order.phone }}</p>
+                <p class="mb-0">{{ order.email }}</p>
+              </div>
+            </div>
+
+            <!-- Order Info -->
+            <div class="row mb-4 border-bottom pb-3">
+              <div class="col-md-3">
+                <small class="text-muted d-block">Order Date:</small>
+                <strong>{{ order.created_at }}</strong>
+              </div>
+              <div class="col-md-3">
+                <small class="text-muted d-block">Order No:</small>
+                <strong>{{ order.order_number }}</strong>
+              </div>
+              <div class="col-md-3">
+                <small class="text-muted d-block">Payment Method:</small>
+                <strong>{{ order.payment_method }}</strong>
+              </div>
+              <div class="col-md-3">
+                <small class="text-muted d-block">Transaction ID:</small>
+                <strong>{{ order.payment.transaction_id }}</strong>
+              </div>
+            </div>
+
+            <!-- Cart Items -->
+            {% for item in ordered_product %}
+            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+              <div class="flex-shrink-0">
+                <img src="{{ item.product.image.url }}" 
+                     class="rounded" 
+                     style="width: 60px; height: 60px; object-fit: cover;">
+              </div>
+              <div class="flex-grow-1 pl-3">
+                <h6 class="mb-0">{{ item.product.product_title }}</h6>
+                <small class="text-muted">{{ item.product.seller.seller_name }}</small>
+              </div>
+              <div class="text-center" style="width: 80px;">
+                <span>{{ item.quantity }} QTY</span>
+              </div>
+              <div class="text-right" style="width: 100px;">
+                <strong>${{ item.price }}</strong>
+              </div>
+            </div>
+            {% endfor %}
+
+            <!-- Totals -->
+            <div class="row">
+              <div class="col-md-8">
+                <!-- Paid Stamp -->
+                <img src="{% static 'images/paid-stamp.png' %}" 
+                     alt="Paid" 
+                     style="max-width: 200px; opacity: 0.9;">
+              </div>
+              <div class="col-md-4">
+                <dl class="dlist-align">
+                  <dt>Subtotal:</dt>
+                  <dd class="text-right">${{ subtotal }}</dd>
+                </dl>
+                {% for key, value in tax_data.items %}
+                  {% for k, v in value.items %}
+                  <dl class="dlist-align">
+                    <dt>{{ key }} ({{ k }}%):</dt>
+                    <dd class="text-right">${{ v }}</dd>
+                  </dl>
+                  {% endfor %}
+                {% endfor %}
+                <dl class="dlist-align">
+                  <dt><strong>Total:</strong></dt>
+                  <dd class="text-right text-dark b"><strong>${{ order.total }}</strong></dd>
+                </dl>
+              </div>
+            </div>
+
+          </div>
+        </article>
+      </main>
+
+      <div class="form-group">
+        {% include "accounts/alerts.html" %}
+      </div> <!-- form-group// -->
+
+    </div> <!-- row.// -->
+  </div> <!-- container.// -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock content %}

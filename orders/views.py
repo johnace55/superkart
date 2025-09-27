@@ -128,7 +128,7 @@ def payments(request):
 
 
         # clear the cart if the payment is success
-        #cart_items.delete()
+        cart_items.delete()
 
 
         # return back to ajax with the status success or failure
