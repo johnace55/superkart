@@ -26,6 +26,7 @@ class Seller(models.Model):
                 context = {
                     'user':self.custom_user,
                     'is_approved':self.is_approved,
+                    'to_email':self.custom_user.email,
                 }
                 if self.is_approved == True:
                     mail_subject = 'your restaurant has been approved!'

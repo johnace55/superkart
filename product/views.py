@@ -1,7 +1,9 @@
 from django.shortcuts import render , redirect , get_object_or_404
 from django.contrib.auth.decorators import login_required
 from product.models import Product , Cart
-from accounts.models import CustomUser
+from accounts.models import CustomUser , CustomUserProfile
+from orders.models import Order
+from orders.forms import OrderForm
 
 
 # Create your views here.
@@ -17,7 +19,7 @@ def cart(request):
 
     return render(request , 'product/cart.html' , context)
 
-
+@login_required
 def add_to_cart(request , food_id):
     if request.user.is_authenticated:
             
@@ -37,7 +39,7 @@ def add_to_cart(request , food_id):
         return redirect('login')
 
 
-
+@login_required
 def decrease_cart(request , food_id):
     
     if request.user.is_authenticated:
@@ -53,7 +55,7 @@ def decrease_cart(request , food_id):
         return redirect('login')
 
 
-
+@login_required
 def remove_cart(request , food_id):
     if request.user.is_authenticated:
         product = Product.objects.get(pk=food_id)
@@ -64,7 +66,33 @@ def remove_cart(request , food_id):
         return redirect('login')
 
 
+@login_required
+def checkout(request):
 
+    cart_items = Cart.objects.filter(custom_user=request.user).order_by('created_at')
+    cart_count = cart_items.count()
+    if cart_count <= 0:
+        return redirect('all_products')
+    
+
+    user_profile = CustomUserProfile.objects.get(custom_user=request.user)
+    default_values = {
+        'first_name':request.user.first_name,
+        'last_name':request.user.last_name,
+        'phone':request.user.phone_number,
+        'email':request.user.email,
+        'address':user_profile.address_line_1,
+        'country':user_profile.country,
+        'state':user_profile.state,
+        'city':user_profile.city,
+        'pin_code':user_profile.pin_code,
+    }
+    form = OrderForm(initial=default_values)
+    context = {
+        "form":form,
+        'cart_items':cart_items,
+    }
+    return render(request , 'product/checkout.html' , context)
 
 
 

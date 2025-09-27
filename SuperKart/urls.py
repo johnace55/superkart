@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path , include
 from django.conf import settings
 from django.conf.urls.static import static
+from product import views as ProductViews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -25,6 +26,12 @@ urlpatterns = [
     path('cart/' , include('product.urls')),
 
     path('accounts/' , include('accounts.urls')),
+
+    #checkout
+    path('checkout/' , ProductViews.checkout , name='checkout'),
+
+    #orders
+    path('orders/' , include('orders.urls')),
 
     path('' , include('tut.urls')),
 

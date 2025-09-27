@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'seller',
     'product',
     'customers',
+    'orders',
 ]
 
 MIDDLEWARE = [
@@ -71,6 +72,7 @@ TEMPLATES = [
                 'tut.context_processors.all_categories',
                 'product.context_processors.get_cart_count',
                 'product.context_processors.get_cart_amounts',
+                'tut.context_processors.get_paypal_client_id',
             ],
         },
     },
@@ -175,5 +177,9 @@ EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Kart Market <aleenafatima225@gmail.com>'
 
 
+PAYPAL_CLIENT_ID = config('PAYPAL_CLIENT_ID')
+
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
 

@@ -1,4 +1,5 @@
 from product.models import Category
+from django.conf import settings
 
 def all_categories(request):
 
@@ -7,5 +8,6 @@ def all_categories(request):
     return dict(categories=categories)
 
 
-
+def get_paypal_client_id(request):
+    return {'PAYPAL_CLIENT_ID':settings.PAYPAL_CLIENT_ID}
 

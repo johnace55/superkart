@@ -1,0 +1,147 @@
+{% extends "tut/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+  <div class="container">
+    <div class="row">
+
+      <!-- LEFT SIDE: Order Form (unchanged) -->
+      <aside class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="mb-0">Billing & Shipping Information</h5>
+          </div>
+          <div class="card-body">
+            <form action="{% url 'place_order' %}" method="post">
+              {% csrf_token %}
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="id_first_name">First Name</label>
+                  {{ form.first_name }}
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="id_last_name">Last Name</label>
+                  {{ form.last_name }}
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="id_phone">Phone</label>
+                  {{ form.phone }}
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="id_email">Email</label>
+                  {{ form.email }}
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="id_address">Address</label>
+                {{ form.address }}
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="id_country">Country</label>
+                  {{ form.country }}
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="id_state">State</label>
+                  {{ form.state }}
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="id_city">City</label>
+                  {{ form.city }}
+                </div>
+                <div class="form-group col-md-6">
+                  <label for="id_pin_code">PIN Code</label>
+                  {{ form.pin_code }}
+                </div>
+              </div>
+
+              <h5>select payment method</h5>
+              <div class='payment-method'>
+                <label>
+                  <input type="radio" name="payment_method" value='PayPal' checked>
+                  <img src="{% static 'images/misc/payment-paypal.png' %}" alt="paypal">
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block">Place Order</button>
+            </form>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT SIDE: Order Summary + Cart Items -->
+      <aside class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="mb-0">Order Summary</h5>
+          </div>
+          <div class="card-body">
+
+            <!-- Improved Cart Items List -->
+            <div class="cart-items mb-3">
+              {% for item in cart_items %}
+              <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                <!-- Product Image -->
+                <div class="flex-shrink-0">
+                  <img src="{{ item.product.image.url }}" 
+                       class="rounded" 
+                       style="width: 60px; height: 60px; object-fit: cover;">
+                </div>
+
+                <!-- Product Details -->
+                <div class="flex-grow-1 pl-3">
+                  <h6 class="mb-1">{{ item.product.product_title }}</h6>
+                  <small class="text-muted">Qty: {{ item.quantity }}</small>
+                </div>
+
+                <!-- Product Price -->
+                <div class="text-right">
+                  <span class="font-weight-bold text-dark">
+                    ${{ item.product.price }}
+                  </span>
+                </div>
+              </div>  
+              {% endfor %}
+            </div>
+
+            <!-- Totals -->
+            <dl class="dlist-align">
+              <dt>Subtotal:</dt>
+              <dd class="text-right">${{ subtotal }}</dd>
+            </dl>
+
+            {% for key , value in tax_dict.items %}
+              {% for k , v in value.items %}
+              <dl class="dlist-align">
+                <dt>{{ key }} ({{ k }}%):</dt>
+                <dd class="text-right">${{ v }}</dd>
+              </dl>
+              {% endfor %}
+            {% endfor %}
+
+            <dl class="dlist-align">
+              <dt>Total:</dt>
+              <dd class="text-right text-dark b"><strong>${{ grand_total }}</strong></dd>
+            </dl>
+
+            <hr>
+            <a href="{% url 'cart' %}" class="btn btn-light btn-block">Back to Cart</a>
+          </div>
+        </div>
+      </aside>
+
+    </div> <!-- row.// -->
+  </div> <!-- container.// -->
+</section>
+
+{% endblock content %}

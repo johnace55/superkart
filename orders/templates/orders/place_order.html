@@ -1,0 +1,193 @@
+{% extends "tut/base.html" %}
+{% load static %}
+
+{% block content %}
+
+<section class="section-content padding-y bg">
+  <div class="container">
+    <div class="row">
+
+      <!-- LEFT SIDE: Order Information Summary -->
+      <aside class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="mb-0">Review Your Order</h5>
+          </div>
+          <div class="card-body">
+            <h6 class="mb-3">Billing & Shipping Information</h6>
+            <dl class="row">
+              <dt class="col-sm-4">First Name:</dt>
+              <dd class="col-sm-8">{{ order.first_name }}</dd>
+
+              <dt class="col-sm-4">Last Name:</dt>
+              <dd class="col-sm-8">{{ order.last_name }}</dd>
+
+              <dt class="col-sm-4">Phone:</dt>
+              <dd class="col-sm-8">{{ order.phone }}</dd>
+
+              <dt class="col-sm-4">Email:</dt>
+              <dd class="col-sm-8">{{ order.email }}</dd>
+
+              <dt class="col-sm-4">Payment:</dt>
+              <dd class="col-sm-8">{{ order.payment_method }}</dd>
+
+              <dt class="col-sm-4">Address:</dt>
+              <dd class="col-sm-8">
+                {{ order.address }}, {{ order.city }}, {{ order.state }}, {{ order.country }} - {{ order.pin_code }}
+              </dd>
+            </dl>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT SIDE: Cart Summary + Payment -->
+      <aside class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-header">
+            <h5 class="mb-0">Order Summary</h5>
+          </div>
+          <div class="card-body">
+
+            <!-- Cart Items -->
+            <div class="cart-items mb-3">
+              {% for item in cart_items %}
+              <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                <div class="flex-shrink-0">
+                  <img src="{{ item.product.image.url }}" 
+                       class="rounded" 
+                       style="width: 60px; height: 60px; object-fit: cover;">
+                </div>
+                <div class="flex-grow-1 pl-3">
+                  <h6 class="mb-1">{{ item.product.product_title }}</h6>
+                  <small class="text-muted">Qty: {{ item.quantity }}</small>
+                </div>
+                <div class="text-right">
+                  <span class="font-weight-bold text-dark">${{ item.product.price }}</span>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+
+            <!-- Totals -->
+            <dl class="dlist-align">
+              <dt>Subtotal:</dt>
+              <dd class="text-right">${{ subtotal }}</dd>
+            </dl>
+
+            {% for key , value in tax_dict.items %}
+              {% for k , v in value.items %}
+                <dl class="dlist-align">
+                  <dt>{{key}} <small>({{k}}%)</small>:</dt>
+                  <dd class="text-right">${{v}}</dd>
+                </dl>
+              {% endfor %}
+            {% endfor %}
+
+            <dl class="dlist-align">
+              <dt>Total:</dt>
+              <dd class="text-right text-dark b"><strong>${{ grand_total }}</strong></dd>
+            </dl>
+
+            <hr>
+
+            <!-- PayPal Button -->
+            <div class="text-center">
+              <div id='paypal-button-container'></div>
+            </div>
+
+          </div>
+        </div>
+      </aside>
+
+    </div> <!-- row.// -->
+  </div> <!-- container.// -->
+</section>
+
+<script>
+
+    function getCookie(name){
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length ; i++) {
+                const cookie = cookies[i].trim();
+                // does this string cookie begin with the name we want?
+                if (cookie.substring(0 , name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    
+
+
+    var grand_total = "{{grand_total}}"
+    var url = "{% url 'payments' %}"
+    var order_number = "{{order.order_number}}"
+    var order_complete = "{% url 'order_complete' %}"
+    const csrftoken = getCookie('csrftoken');
+    // render the paypal button into #paypal-button-container
+    paypal.Buttons({
+
+        // set up the transaction
+        createOrder: function(data , actions){
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: grand_total
+                    }
+                }]
+            });
+        },
+
+        // finalize the transaction
+        onApprove: function(data , actions){
+            return actions.order.capture().then(function(orderData) {
+                // successful capture! for demo purposes:
+                console.log(orderData);
+                var transaction = orderData.purchase_units[0].payments.captures[0];
+                console.log(transaction.id);
+
+                var transaction_id = transaction.id
+                var status = orderData.status
+                var payment_method = 'PayPal'
+
+                sendTransaction(transaction.id , payment_method , status);
+
+
+                // Replace the above to show a success message within this page, e.g.
+                const element = document.getElementById('paypal-button-container');
+                element.innerHTML = '';
+                element.innerHTML = '<h4 class="text-center"><i class="fa fa-spinner fa-spin"></i>Please wait.....</h4>';
+                // Or go to another URL:  actions.redirect('thank_you.html');
+
+            });
+        }
+
+    }).render('#paypal-button-container');
+
+    // send the data to payments view to store it in the database
+
+    function sendTransaction(transaction_id , payment_method , status){
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                'order_number': order_number,
+                'transaction_id': transaction_id,
+                'payment_method': payment_method,
+                'status': status,
+                'csrfmiddlewaretoken': csrftoken,
+            },
+            success : function(response){
+                console.log('response==> ' , response)
+                window.location = order_complete +'?order_no='+response.order_number+'&trans_id='+response.transaction_id
+            }
+        })
+    }
+
+</script>
+
+{% endblock content %}
