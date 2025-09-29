@@ -22,24 +22,20 @@
 							<div class="card shadow-sm p-3 mb-4 bg-white rounded">
 								<h6 class="text-muted">Total Orders</h6>
 								<a href="#" style="text-decoration: none; color: inherit;">
-									<h4 class="mb-0">120</h4>
+									<h4 class="mb-0">{{orders_count}}</h4>
 								</a>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="card shadow-sm p-3 mb-4 bg-white rounded">
 								<h6 class="text-muted">Total Revenue</h6>
-								<a href="#" style="text-decoration: none; color: inherit;">
-									<h4 class="mb-0">$12,450</h4>
-								</a>
+								<h4 style="text-decoration: none; color: inherit;" class="mb-0">${{total_revenue | floatformat:2}}</h4>
 							</div>
 						</div>
 						<div class="col-md-4">
 							<div class="card shadow-sm p-3 mb-4 bg-white rounded">
 								<h6 class="text-muted">This Month</h6>
-								<a href="#" style="text-decoration: none; color: inherit;">
-									<h4 class="mb-0">$2,300</h4>
-								</a>
+								<h4 style="text-decoration: none; color: inherit;" class="mb-0">${{current_month_revenue | floatformat:2}}</h4>
 							</div>
 						</div>
 					</div> <!-- row.// -->
@@ -50,33 +46,25 @@
 					<div class="table-responsive">
 						<table class="table table-hover">
 							<tr>
+								<th>#</th>
 								<th>Order ID</th>
-								<th>Product</th>
-								<th>Seller</th>
+								<th>Name</th>
+								<th>Total</th>
 								<th>Status</th>
+								<th>Date</th>
 								<th>Action</th>
 							</tr>
+							{% for order in recent_orders %}
 							<tr>
-								<td>#6123</td>
-								<td>Product name goes here</td>
-								<td>Nike Clothing</td>
-								<td><span class="badge badge-success">Delivered</span></td>
-								<td><a href="#" class="btn btn-outline-primary btn-sm">Details</a></td>
+								<td>{{forloop.counter}}</td>
+								<td>{{order.order_number}}</td>
+								<td>{{order.name}}</td>
+								<td>${{order.get_total_by_seller.grand_total}}</td>
+								<td><span class="badge badge-success">{{order.status}}</span></td>
+								<td>{{order.created_at}}</td>
+								<td><a href="{% url 's_order_details' order.order_number %}" class="btn btn-outline-primary btn-sm">Details</a></td>
 							</tr>
-							<tr>
-								<td>#6124</td>
-								<td>Another name goes here</td>
-								<td>ABC Shop</td>
-								<td><span class="badge badge-warning">Pending</span></td>
-								<td><a href="#" class="btn btn-outline-primary btn-sm">Details</a></td>
-							</tr>
-							<tr>
-								<td>#6125</td>
-								<td>The name of the product</td>
-								<td>Wallmart</td>
-								<td><span class="badge badge-info">Shipped</span></td>
-								<td><a href="#" class="btn btn-outline-primary btn-sm">Details</a></td>
-							</tr>
+							{% endfor %}
 						</table>
 					</div> <!-- table-responsive .end// -->
 				</div>

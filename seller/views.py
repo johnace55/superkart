@@ -10,7 +10,8 @@ from product.models import Category , Product
 from product.forms import ProductForm
 from django.template.defaultfilters import slugify
 from django.utils import timezone
-
+from seller.decorators import approved_seller_required
+from orders.models import Order , OrderedProduct
 
 
 
@@ -67,6 +68,7 @@ def product_builder(request):
 
 @login_required
 @user_passes_test(check_role_seller)
+@approved_seller_required
 def add_product(request):
 
     if request.method == 'POST':
@@ -94,6 +96,7 @@ def add_product(request):
 
 @login_required
 @user_passes_test(check_role_seller)
+@approved_seller_required
 def edit_product(request , pk):
 
     product_obj = get_object_or_404(Product , pk=pk)
@@ -122,7 +125,9 @@ def edit_product(request , pk):
     return render(request , 'seller/edit_product.html' , context)
 
     
-
+@login_required
+@user_passes_test(check_role_seller)
+@approved_seller_required
 def delete_product(request , pk):
     
     product_obj = get_object_or_404(Product , pk=pk)
@@ -132,6 +137,34 @@ def delete_product(request , pk):
     return redirect("product_builder")
 
 
+@login_required
+@user_passes_test(check_role_seller)
+@approved_seller_required
+def s_order_details(request , order_number):
+    try:
+        seller = Seller.objects.get(custom_user=request.user)
+        order = Order.objects.get(order_number=order_number , is_ordered=True)
+        ordered_product = OrderedProduct.objects.filter(order=order , product__seller=seller)
+        context = {
+            'order':order,
+            'ordered_product':ordered_product,
+            'subtotal':order.get_total_by_seller()['subtotal'],
+            'tax_dict':order.get_total_by_seller()['tax_dict'],
+            'grand_total':order.get_total_by_seller()['grand_total'],
+        }
+        return render(request , 'seller/s_order_details.html' , context)
+    except:
+        return redirect('sellerdashboard')
 
+@login_required
+@user_passes_test(check_role_seller)
+@approved_seller_required
+def seller_my_orders(request):
+    seller = Seller.objects.get(custom_user=request.user)
+    orders = Order.objects.filter(sellers=seller , is_ordered=True).order_by('-created_at')
+    context = {
+        'orders':orders,
+    }
+    return render(request , 'seller/seller_my_orders.html' , context)
 
 

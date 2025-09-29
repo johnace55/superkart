@@ -34,6 +34,16 @@
 <!-- Include the PayPal JavaScript SDK -->
 <script src="https://www.paypal.com/sdk/js?client-id={{PAYPAL_CLIENT_ID}}&currency=USD"></script>
 
+<link rel="stylesheet" href="//cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
+<script src='//cdn.datatables.net/2.3.4/js/dataTables.min.js'></script>
+
+<script>
+  // Make sure this runs after DOM loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    let table = new DataTable('#myOrdersTable');
+  });
+</script>
+
 <script type="text/javascript">
 /// some script
 

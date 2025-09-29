@@ -8,6 +8,7 @@ import simplejson as json
 from orders.utils import generate_order_number
 from accounts.utils import send_notification_email
 from django.http import JsonResponse
+from product.models import Tax
 
 
 # Create your views here.
@@ -18,6 +19,55 @@ def place_order(request):
     cart_count = cart_items.count()
     if cart_count <= 0:
         return redirect('all_products')
+    
+    sellers_ids = []
+    for i in cart_items:
+        if i.product.seller.id not in sellers_ids:
+            sellers_ids.append(i.product.seller.id)
+    
+    # {"seller_id":{"subtotal":{"tax_type":{"tax_percentage":"tax_amount"}}}}
+
+    get_tax = Tax.objects.filter(is_active=True)
+
+    # Calculate subtotal per seller
+
+    seller_subtotals = {}
+    for i in cart_items:
+        product = Product.objects.get(pk=i.product.pk)
+        #print(product , product.seller.id)
+        seller = product.seller.id 
+        product_total = product.price * i.quantity
+
+        if seller in seller_subtotals:
+            subtotal = seller_subtotals[seller]
+            subtotal += product_total
+            seller_subtotals[seller] = subtotal
+        else:
+            seller_subtotals[seller] = product_total
+    
+    #print(vendor_subtotals)
+    
+
+    # Calculate tax for each seller's subtotal
+
+    total_data = {}
+
+    for seller_id , subtotal in seller_subtotals.items():
+
+        tax_dict = {}
+
+        for tax in get_tax:
+            tax_type = tax.tax_type
+            tax_percentage = tax.tax_percentage
+
+            tax_amount = round((tax_percentage * subtotal) / 100 , 2)
+            tax_dict.update({tax_type: {str(tax_percentage): str(tax_amount)}})
+        
+        total_data.update({seller_id: {str(subtotal): str(tax_dict)}})
+    
+    #print(total_data)
+
+
     
     subtotal = get_cart_amounts(request)['subtotal']
     total_tax = get_cart_amounts(request)['tax']
@@ -40,10 +90,12 @@ def place_order(request):
             order.custom_user = request.user
             order.total = grand_total
             order.tax_data = json.dumps(tax_data)
+            order.total_data = json.dumps(total_data)
             order.total_tax = total_tax
             order.payment_method = request.POST['payment_method']
             order.save()
             order.order_number = generate_order_number(order.pk)
+            order.sellers.add(*sellers_ids)
             order.save()
 
             context = {

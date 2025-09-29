@@ -18,7 +18,13 @@ def product_detail(request , slug):
 
     product = Product.objects.get(slug=slug)
 
-    in_cart = Cart.objects.filter(product=product , custom_user=request.user).exists()
+    if request.user.is_authenticated:
+
+        in_cart = Cart.objects.filter(product=product , custom_user=request.user).exists()
+    
+    else:
+        in_cart = False
+
 
     context = {
         'product':product,
@@ -43,8 +49,6 @@ def all_products(request , category=None):
         paginator = Paginator(products , 2)
         page = request.GET.get('page')
         paged_products = paginator.get_page(page)
-
-
 
 
     categories = Category.objects.all()

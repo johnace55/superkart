@@ -19,49 +19,49 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="id_first_name">First Name</label>
-                  {{ form.first_name }}
+                  <input type="text" name="first_name" id="id_first_name" value="{{ form.first_name.value }}" required  class="form-control no-border">
                 </div>
                 <div class="form-group col-md-6">
                   <label for="id_last_name">Last Name</label>
-                  {{ form.last_name }}
+                  <input type="text" name="last_name" id="id_last_name" value="{{ form.last_name.value }}" required  class="form-control no-border">
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="id_phone">Phone</label>
-                  {{ form.phone }}
+                  <input type="tel" name="phone" id="id_phone" value="{{ form.phone.value }}" required  class="form-control no-border">
                 </div>
                 <div class="form-group col-md-6">
                   <label for="id_email">Email</label>
-                  {{ form.email }}
+                  <input type="email" name="email" id="id_email" value="{{ form.email.value }}" required  class="form-control no-border">
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="id_address">Address</label>
-                {{ form.address }}
+                <input type="text" name="address" id="id_address" value="{{ form.address.value }}" required  class="form-control no-border">
               </div>
 
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="id_country">Country</label>
-                  {{ form.country }}
+                  <input type="text" name="country" id="id_country" value="{{ form.country.value }}" required  class="form-control no-border">
                 </div>
                 <div class="form-group col-md-6">
                   <label for="id_state">State</label>
-                  {{ form.state }}
+                  <input type="text" name="state" id="id_state" value="{{ form.state.value }}" required  class="form-control no-border">
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="id_city">City</label>
-                  {{ form.city }}
+                  <input type="text" name="city" id="id_city" value="{{ form.city.value }}" required  class="form-control no-border">
                 </div>
                 <div class="form-group col-md-6">
                   <label for="id_pin_code">PIN Code</label>
-                  {{ form.pin_code }}
+                  <input type="text" name="pin_code" id="id_pin_code" value="{{ form.pin_code.value }}" required  class="form-control no-border">
                 </div>
               </div>
 

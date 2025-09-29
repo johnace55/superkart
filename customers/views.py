@@ -41,7 +41,7 @@ def customers_my_orders(request):
 
 
 @login_required
-def order_details(request , order_number):
+def c_order_details(request , order_number):
     try:
         order = Order.objects.get(order_number=order_number , is_ordered=True)
         ordered_product = OrderedProduct.objects.filter(order=order)
@@ -56,7 +56,7 @@ def order_details(request , order_number):
             'subtotal':subtotal,
             'tax_data':tax_data,
         }
-        return render(request , 'customers/order_details.html' , context)
+        return render(request , 'customers/c_order_details.html' , context)
     except:
         return redirect('home')
 

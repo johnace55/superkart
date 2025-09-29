@@ -1,8 +1,14 @@
 from django.db import models
 from accounts.models import CustomUser
 from product.models import Product
+from seller.models import Seller
+import simplejson as json 
+import ast
 
 # Create your models here.
+
+
+request_object = ''
 
 class Payment(models.Model):
     PAYMENT_METHOD = (
@@ -30,6 +36,7 @@ class Order(models.Model):
 
     custom_user = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
     payment = models.ForeignKey(Payment, on_delete=models.SET_NULL, blank=True, null=True)
+    sellers = models.ManyToManyField(Seller , blank=True)
     order_number = models.CharField(max_length=50)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -41,7 +48,8 @@ class Order(models.Model):
     city = models.CharField(max_length=50)
     pin_code = models.CharField(max_length=10)
     total = models.FloatField()
-    tax_data = models.JSONField(blank=True, help_text = "Data format: {'tax_type':{'tax_percentage':'tax_amount'}}")
+    tax_data = models.JSONField(blank=True, null=True , help_text = "Data format: {'tax_type':{'tax_percentage':'tax_amount'}}")
+    total_data = models.JSONField(blank=True , null=True)
     total_tax = models.FloatField()
     payment_method = models.CharField(max_length=25)
     status = models.CharField(max_length=15, choices=STATUS, default='New')
@@ -53,6 +61,40 @@ class Order(models.Model):
     @property
     def name(self):
         return f'{self.first_name} {self.last_name}'
+    
+    def order_placed_to(self):
+        return ", ".join([str(i) for i in self.sellers.all()])
+    
+    def get_total_by_seller(self):
+        seller = Seller.objects.get(custom_user=request_object.user)
+        subtotal = 0
+        tax = 0
+        tax_dict = {}
+        if self.total_data:
+            total_data = json.loads(self.total_data)
+            data = total_data.get(str(seller.id))
+            
+            
+            for key , value in data.items():
+                subtotal += float(key)
+                value_dict = ast.literal_eval(value)
+                tax_dict.update(value_dict)
+
+            # {'FBR': {'9.00': '119.88'}, 'WHT': {'7.00': '93.24'}}
+                
+                for tax_type, tax_info in value_dict.items():
+                    #print(tax_info)
+                    for percentage , amount in tax_info.items():
+                        tax += float(amount)
+
+        grand_total = float(subtotal) + float(tax)
+        context = {
+            'subtotal':subtotal,
+            'tax':tax,
+            'tax_dict':tax_dict,
+            'grand_total':grand_total,
+        }
+        return context
     
 
     def __str__(self):

@@ -4,12 +4,18 @@
 			<a class="list-group-item {% if '/accounts/sellerdashboard/' == request.path or '/accounts/seller/' == request.path %}active{% endif %}" href="{% url 'sellerdashboard' %}"> dashboard </a>
 			<a class="list-group-item {% if 'profile' in request.path %}active{% endif %}" href="{% url 'seller_profile' %}"> my store </a>
 			<a class="list-group-item {% if 'product_builder' in request.path %}active{% endif %}" href="{% url 'product_builder' %}"> upload product </a>
-			<a class="list-group-item" href="#"> Orders </a>
-			<a class="list-group-item" href="#">earnings </a>
+			<a class="list-group-item {% if 'seller_my_orders' in request.path %}active{% endif %}" href="{% url 'seller_my_orders' %}"> Orders </a>
 			<a class="list-group-item" href="#">change password </a>
 		</ul>
 		<br>
-		<a class="btn btn-light btn-block" href="#"> <i class="fa fa-power-off"></i> <span class="text">Log out</span> </a> 
+		<form method="POST" action="{% url 'logout' %}">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-light btn-block">
+				<i class="fa fa-power-off"></i>
+				<span class="text">Log out</span>
+			</button>
+		</form>
+
 		<!--   SIDEBAR .//END   -->
 	</aside>
 

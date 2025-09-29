@@ -7,7 +7,13 @@
 			<a class="list-group-item" href="#">change password </a>
 		</ul>
 		<br>
-		<a class="btn btn-light btn-block" href="{% url 'logout' %}"> <i class="fa fa-power-off"></i> <span class="text">Log out</span> </a> 
+		<form method="POST" action="{% url 'logout' %}">
+			{% csrf_token %}
+			<button type="submit" class="btn btn-light btn-block">
+				<i class="fa fa-power-off"></i>
+				<span class="text">Log out</span>
+			</button>
+		</form>
 		<!--   SIDEBAR .//END   -->
 	</aside>
 

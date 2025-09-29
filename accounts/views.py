@@ -12,6 +12,7 @@ from django.utils.http import urlsafe_base64_encode , urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from orders.models import Order
+from datetime import datetime
 
 
 
@@ -327,7 +328,7 @@ def myAccount(request):
 @login_required
 @user_passes_test(check_role_customer)
 def customerdashboard(request):
-    orders = Order.objects.filter(custom_user=request.user , is_ordered=True)
+    orders = Order.objects.filter(custom_user=request.user , is_ordered=True).order_by('-created_at')
     recent_orders = orders[:5]
     context = {
         'orders':orders,
@@ -340,7 +341,31 @@ def customerdashboard(request):
 @login_required
 @user_passes_test(check_role_seller)
 def sellerdashboard(request):
-    return render(request , 'accounts/sellerdashboard.html')
+    seller = Seller.objects.get(custom_user=request.user)
+    orders = Order.objects.filter(sellers=seller , is_ordered=True).order_by('-created_at')
+    recent_orders = orders[:5]
+
+    # total revenue
+    total_revenue = 0
+    for i in orders:
+        total_revenue += i.get_total_by_seller()['grand_total']
+
+    # current month revenue
+    current_month_revenue = 0
+    current_month = datetime.now().month
+    current_month_orders = orders.filter(sellers=seller , created_at__month=current_month)
+
+    for i in current_month_orders:
+        current_month_revenue += i.get_total_by_seller()['grand_total']
+
+    context = {
+        'orders':orders,
+        'orders_count':orders.count(),
+        'recent_orders':recent_orders,
+        'total_revenue':total_revenue,
+        'current_month_revenue':current_month_revenue,
+    }
+    return render(request , 'accounts/sellerdashboard.html' , context)
 
 
 
