@@ -1,0 +1,41 @@
+services:
+  - type: web
+    name: superkart
+    env: python
+    plan: free   # or starter/standard depending on your Render plan
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+      python manage.py migrate
+    startCommand: gunicorn SuperKart.wsgi:application
+    envVars:
+      - key: SECRET_KEY
+        value: your-secret-key
+      - key: DEBUG
+        value: False
+      - key: DB_NAME
+        value: yourdbname
+      - key: DB_USER
+        value: yourdbuser
+      - key: DB_PASSWORD
+        value: yourdbpassword
+      - key: DB_HOST
+        value: yourdbhost
+      - key: CLOUDINARY_CLOUD_NAME
+        value: your-cloudinary-name
+      - key: CLOUDINARY_API_KEY
+        value: your-api-key
+      - key: CLOUDINARY_API_SECRET
+        value: your-api-secret
+      - key: PAYPAL_CLIENT_ID
+        value: your-paypal-client-id
+      - key: EMAIL_BACKEND
+        value: django.core.mail.backends.smtp.EmailBackend
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_HOST_USER
+        value: your-email@gmail.com
+      - key: EMAIL_HOST_PASSWORD
+        value: your-email-password
