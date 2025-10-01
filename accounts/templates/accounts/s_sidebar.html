@@ -5,7 +5,7 @@
 			<a class="list-group-item {% if 'profile' in request.path %}active{% endif %}" href="{% url 'seller_profile' %}"> my store </a>
 			<a class="list-group-item {% if 'product_builder' in request.path %}active{% endif %}" href="{% url 'product_builder' %}"> upload product </a>
 			<a class="list-group-item {% if 'seller_my_orders' in request.path %}active{% endif %}" href="{% url 'seller_my_orders' %}"> Orders </a>
-			<a class="list-group-item" href="#">change password </a>
+			<a class="list-group-item {% if 'change_password' in request.path %}active{% endif %}" href="{% url 'change_password' %}">change password </a>
 		</ul>
 		<br>
 		<form method="POST" action="{% url 'logout' %}">

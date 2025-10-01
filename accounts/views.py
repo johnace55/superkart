@@ -13,6 +13,7 @@ from django.utils.encoding import force_bytes
 from django.contrib.auth.tokens import default_token_generator
 from orders.models import Order
 from datetime import datetime
+from django.contrib.auth.forms import PasswordChangeForm
 
 
 
@@ -84,7 +85,7 @@ def registercustomer(request):
 
             mail_subject = 'please activate your account'
 
-            email_template = 'accounts/emails/accounts_verification_email.html'
+            email_template = 'accounts/emails/customer_accounts_verification_email.html'
 
             send_verification_email(request , user , mail_subject , email_template)
 
@@ -141,7 +142,7 @@ def registerseller(request):
 
             mail_subject = 'please activate your account'
 
-            email_template = 'accounts/emails/accounts_verification_email.html'
+            email_template = 'accounts/emails/seller_accounts_verification_email.html'
 
             send_verification_email(request , user , mail_subject , email_template)
 
@@ -294,6 +295,24 @@ def login(request):
         
 
     return render(request , 'accounts/login.html')
+
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user , data=request.POST)
+        if form.is_valid():
+            form.save()
+            logout(request)
+            messages.success(request , 'password change successfully please login with your new password')
+            return redirect('login')
+    else:
+        form = PasswordChangeForm(user=request.user)
+    context = {
+        'form':form,
+    }
+    return render(request , 'accounts/change_password.html' , context)
+
 
 
 

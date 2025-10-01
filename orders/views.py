@@ -5,10 +5,12 @@ from django.contrib.auth.decorators import login_required
 from product.context_processors import get_cart_amounts
 from orders.forms import OrderForm
 import simplejson as json
-from orders.utils import generate_order_number
+from orders.utils import generate_order_number , order_total_by_seller
 from accounts.utils import send_notification_email
 from django.http import JsonResponse
 from product.models import Tax
+from django.contrib.sites.shortcuts import get_current_site
+
 
 
 # Create your views here.
@@ -155,10 +157,21 @@ def payments(request):
 
         mail_subject = 'thank you for ordering with us'
         mail_template = 'orders/order_confirmation_email.html'
+
+        ordered_product = OrderedProduct.objects.filter(order=order)
+        customer_subtotal = 0
+        for item in ordered_product:
+            customer_subtotal += (item.price * item.quantity)
+        tax_data = json.loads(order.tax_data)
+        
         context = {
             'user' : request.user,
             'order' : order,
             'to_email' : order.email,
+            'ordered_product':ordered_product,
+            'domain':get_current_site(request),
+            'customer_subtotal':customer_subtotal,
+            'tax_data':tax_data,
         }
         send_notification_email(mail_subject , mail_template , context)
 
@@ -171,12 +184,18 @@ def payments(request):
         for i in cart_items:
             if i.product.seller.custom_user.email not in to_email:
                 to_email.append(i.product.seller.custom_user.email)
-        context = {
-            'user' : request.user,
-            'order' : order,
-            'to_email' : to_email,
-        }
-        send_notification_email(mail_subject , mail_template , context)
+
+                ordered_product_to_seller = OrderedProduct.objects.filter(order=order , product__seller=i.product.seller)
+                context = {
+                    'user' : request.user,
+                    'order' : order,
+                    'to_email' : i.product.seller.custom_user.email,
+                    'ordered_product_to_seller':ordered_product_to_seller,
+                    'seller_subtotal': order_total_by_seller(order , i.product.seller.id)['subtotal'],
+                    'seller_tax_data': order_total_by_seller(order , i.product.seller.id)['tax_dict'],
+                    'seller_grand_total': order_total_by_seller(order , i.product.seller.id)['grand_total'],
+                }
+                send_notification_email(mail_subject , mail_template , context)
 
 
         # clear the cart if the payment is success

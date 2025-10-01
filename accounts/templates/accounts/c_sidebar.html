@@ -4,7 +4,7 @@
 			<a class="list-group-item {% if '/accounts/customerdashboard/' == request.path or '/accounts/customer/' == request.path %}active{% endif %}" href="{% url 'customerdashboard' %}"> Dashboard </a>
 			<a class="list-group-item {% if 'customers_my_orders' in request.path or 'order_details' in request.path %}active{% endif %}" href="{% url 'customers_my_orders' %}"> My orders </a>
 			<a class="list-group-item {% if 'customerprofile' in request.path %}active{% endif %}" href="{% url 'customerprofile' %}"> Profile Settings </a>
-			<a class="list-group-item" href="#">change password </a>
+			<a class="list-group-item {% if 'change_password' in request.path %}active{% endif %}" href="{% url 'change_password' %}">change password </a>
 		</ul>
 		<br>
 		<form method="POST" action="{% url 'logout' %}">

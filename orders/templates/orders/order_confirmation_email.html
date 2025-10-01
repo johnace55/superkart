@@ -1,14 +1,182 @@
-{% autoescape off %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>GreatKart Order Confirmation</title>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      background-color: #f7f9fc;
+      font-family: 'Lato', Arial, sans-serif;
+      color: #333;
+    }
+    #email {
+      margin: auto;
+      width: 600px;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .header {
+      background: linear-gradient(135deg, #0066cc, #0099ff);
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0; font-size: 22px;
+    }
+    .content {
+      padding: 30px;
+      text-align: left;
+    }
+    .content h2 {
+      font-size: 20px;
+      margin-bottom: 15px;
+      color: #0066cc;
+    }
+    .order-details {
+      background: #f0f6ff;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .order-details p {
+      margin: 8px 0;
+      font-size: 15px;
+    }
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .product-table th {
+      background: #0066cc;
+      color: #fff;
+      padding: 10px;
+      text-align: left;
+    }
+    .product-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      vertical-align: middle;
+    }
+    .product-table img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    /* Totals table styling */
+    .totals-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+    .totals-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+    }
+    .totals-table tr:last-child td {
+      font-weight: bold;
+      background: #f0f6ff;
+      color: #0066cc;
+    }
+    .footer {
+      font-size: 13px;
+      color: #888;
+      padding: 20px;
+      text-align: center;
+      background: #f7f9fc;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #0066cc, #0099ff);
+      color: #fff !important;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
 
-hi {{user.username}},
+<div id="email">
+  <div class="header">
+    <h1>Thank You for Your Order!</h1>
+  </div>
 
-thank you for your order.
-your order number: {{order.order_number}}
-transaction ID: {{order.payment.transaction_id}}
+  <div class="content">
+    <p>Hi <strong>{{ user.username }}</strong>,</p>
+    <p>We’re happy to let you know that we’ve received your order. Below are your order details:</p>
 
+    <div class="order-details">
+      <p><strong>Order Date:</strong> {{ order.created_at }}</p>
+      <p><strong>Order Number:</strong> {{ order.order_number }}</p>
+      <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+      <p><strong>Transaction ID:</strong> {{ order.payment.transaction_id }}</p>
+    </div>
 
+    <h2>Order Summary</h2>
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Product</th>
+          <th>Qty</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in ordered_product %}
+        <tr>
+          <td>
+            <img src="http://{{domain}}{{ item.product.image.url }}" alt="{{ item.product.product_title }}">
+          </td>
+          <td>
+            <p>{{ item.product }}</p>
+            <small><a href="http://{{domain}}{% url 'seller_store' item.product.seller.seller_name %}">{{item.product.seller.seller_name}}</a></small>
+          </td>
+          <td>{{ item.quantity }}</td>
+          <td>${{ item.price }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
+    <table class="totals-table">
+      <tbody>
+        <tr>
+          <td>Subtotal</td>
+          <td>${{ customer_subtotal }}</td>
+        </tr>
 
+        {% for key , value in tax_data.items %}
+          {% for k , v in value.items %}
+            <tr>
+              <td>{{key}} <small>({{k}}%)</small></td>
+              <td>${{v}}</td>
+            </tr>
+          {% endfor %}
+        {% endfor %}
 
-{% endautoescape %}
+        <tr>
+          <td>Grand Total</td>
+          <td>${{ order.total }}</td>
+        </tr>
+      </tbody>
+    </table>
 
+  <div class="footer">
+    <p>© {{ current_year }} GreatKart. All rights reserved.</p>
+  </div>
+</div>
+
+</body>
+</html>

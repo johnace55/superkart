@@ -1,18 +1,79 @@
-{% autoescape off %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Store Approval - GreatKart</title>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      background-color: #f7f9fc;
+      font-family: 'Lato', Arial, sans-serif;
+      color: #333;
+    }
+    #email {
+      margin: auto;
+      width: 600px;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    .header {
+      background: linear-gradient(135deg, #0066cc, #0099ff);
+      color: #ffffff;
+      padding: 20px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0; font-size: 22px;
+    }
+    .content {
+      padding: 30px;
+      text-align: left;
+    }
+    .content p {
+      font-size: 15px;
+      margin: 15px 0;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #0066cc, #0099ff);
+      color: #fff !important;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .footer {
+      font-size: 13px;
+      color: #888;
+      padding: 20px;
+      text-align: center;
+      background: #f7f9fc;
+    }
+  </style>
+</head>
+<body>
 
-hi {{user.username}},
+<div id="email">
+  <div class="header">
+    <h1>Congratulations! 🎉</h1>
+  </div>
+
+  <div class="content">
+    <p>Hi <strong>{{ user.username }}</strong>,</p>
+    <p>We are excited to let you know that your store has been <strong>approved</strong> to sell products on <strong>GreatKart</strong>.</p>
+    <p>You can now log in to your seller dashboard, start adding products, and begin selling to our customers.</p>
 
 
-{% if is_approved %}
-your restaurant has been approved!
-{% else %}
-we are sorry your shop is not approved to sell on this website!
-{% endif %}
+  </div>
 
-please click on below link to confirm your registration.
+  <div class="footer">
+    <p>© {{ current_year }} GreatKart. All rights reserved.</p>
+  </div>
+</div>
 
-
-
-
-{% endautoescape %}
-
+</body>
+</html>

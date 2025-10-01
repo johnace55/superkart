@@ -22,7 +22,7 @@ class Seller(models.Model):
             orig = Seller.objects.get(pk=self.pk)
             
             if orig != self.is_approved:
-                mail_template = 'accounts/emails/admin_approval_email.html'
+                
                 context = {
                     'user':self.custom_user,
                     'is_approved':self.is_approved,
@@ -30,10 +30,12 @@ class Seller(models.Model):
                 }
                 if self.is_approved == True:
                     mail_subject = 'your restaurant has been approved!'
+                    mail_template = 'accounts/emails/admin_approval_email.html'
                 
                     send_notification_email(mail_subject , mail_template , context)
                 else:
-                    mail_subject = 'we are sorry your shop is not approved to sell on this website!'
+                    mail_subject = 'we are sorry your store is not approved to sell on this website!'
+                    mail_template = 'accounts/emails/admin_reject_email.html'
                     
                     send_notification_email(mail_subject , mail_template , context)
         return super(Seller , self).save(*args , **kwargs)
